@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Spotify Genel Bakış</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body { font-family: sans-serif; background:#121212; color:white; padding:20px; }
+        h1,h2 { color:#1db954; }
+        .top-list { display:flex; gap:20px; flex-wrap:wrap; margin-bottom:30px; }
+        .top-item { display:flex; flex-direction:column; align-items:center; width:120px; text-align:center; }
+        .top-item img { border-radius:10px; width:100px; height:100px; object-fit:cover; margin-bottom:5px; }
+        a { color:white; text-decoration:none; }
+        .nav { margin-bottom:30px; }
+        .nav a { margin-right:15px; }
+        .top-list {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.top-item img {
+    width:100px;
+    height:100px;
+    border-radius:10px;
+    object-fit:cover;
+    box-shadow:0 4px 15px rgba(0,0,0,0.5);
+}
+
+.top-item {
+    background: #181818;
+    border-radius: 15px;
+    padding: 10px;
+    width: 140px;
+    text-align: center;
+    transition: transform 0.2s;
+}
+
+.top-item img {
+    width: 100px;
+    height: 100px;
+    border-radius: 10px;
+    object-fit: cover;
+    margin-bottom: 8px;
+}
+
+.top-item:hover {
+    transform: scale(1.05);
+}
+
+.top-item strong {
+    display: block;
+    color: #1db954;
+    margin-bottom: 4px;
+}
+
+.top-item p {
+    font-size: 0.85rem;
+    color: #ccc;
+    margin: 0;
+}
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="topbar">
+        <div class="nav-left">
+            <a class="btn" href="/tracks">🎵 Top Şarkılar</a>
+            <a class="btn" href="/artists">🎤 Top Sanatçılar</a>
+            <a class="btn" href="/albums">💿 Top Albümler</a>
+            <a class="btn" href="/history">▐▐ Dinleme Geçmişi</a>
+            <a class="btn" href="/overview">🌐 Genel Bakış</a>
+        </div>
+        <a class="logout-btn" href="/logout">🚪Çıkış</a>
+    </div>
+
+    <div class="profile">
+        {% if profile.image %}
+            <img src="{{ profile.image }}" width="80">
+        {% endif %}
+        <div>
+            <h2>{{ profile.name }}</h2>
+            {% if profile.product == "premium" %}
+                <span style="color:#1db954; font-weight:bold;">🎵 Premium Hesap</span>
+            {% else %}
+                <span style="color:gray; font-weight:bold;">🎧 Free Hesap</span>
+            {% endif %}
+            <br><small style="color:#aaa;">Spotify hesabınla giriş yaptın</small>
+        </div>
+    </div>
+
+    <h1>Genel Bakış</h1>
+
+    <h2>En iyi 3 Şarkı</h2>
+    <div class="top-list">
+        {% for track in top_tracks[:3] %}
+        <div class="top-item">
+            <a href="{{ track.url }}" target="_blank">
+                <img src="{{ track.image }}">
+                <strong>{{ loop.index }}. {{ track.name }}</strong>
+                <p>{{ track.artist }}</p>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <h2>En İyi 3 Sanatçı</h2>
+    <div class="top-list">
+        {% for artist in top_artists[:3] %}
+        <div class="top-item">
+            <a href="{{ artist.url }}" target="_blank">
+                <img src="{{ artist.image }}">
+                <strong>{{ loop.index }}. {{ artist.name }}</strong>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <h2>En İyi 3 Albüm</h2>
+    <div class="top-list">
+        {% for album in top_albums[:3] %}
+        <div class="top-item">
+            <a href="{{ album.url }}" target="_blank">
+                <img src="{{ album.image }}">
+                <strong>{{ loop.index }}. {{ album.name }}</strong>
+                <p>{{ album.artist }}</p>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

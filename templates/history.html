@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Spotify Dinleme Geçmişin</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body { font-family: sans-serif; background:#121212; color:white;}
+        .now-playing { transition: background 0.5s ease; position:relative; padding:20px; border-radius:15px; margin-bottom:30px; max-width:600px;}
+        .bg-blur { filter: blur(20px); position:absolute; top:0; left:0; width:100%; height:150px; z-index:-1; background-size:cover; opacity:0.3; border-radius:15px; }
+        .progress-container { height:6px; background:#333; border-radius:10px; overflow:hidden; margin-top:10px; width:100%; }
+        .progress-bar { height:100%; background:#1db954; width:0%; transition: width 0.5s linear; }
+        a { text-decoration:none; color:white; display:flex; gap:15px; align-items:center;}
+        img { border-radius:10px; transition: transform 0.4s ease; }
+        #progress-wrapper { display:none; }
+        #no-song { display:none; color:#aaa; text-align:center; }
+        .song-transition-out { opacity:0; transform: translateY(20px); transition: all 0.4s ease; }
+        .song-img-animate { transform: scale(1.05); }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="topbar">
+        <div class="nav-left">
+            <a class="btn" href="/tracks">🎵 Top Şarkılar</a>
+            <a class="btn" href="/artists">🎤 Top Sanatçılar</a>
+            <a class="btn" href="/albums">💿 Top Albümler</a>
+            <a class="btn" href="/history">▐▐  Dinleme Geçmişi</a>
+            <a class="btn" href="/overview">🌐 Genel Bakış</a>
+        </div>
+        <a class="logout-btn" href="/logout">🚪Çıkış</a>
+    </div>
+
+    <div class="profile">
+        {% if profile.images %}
+            <img src="{{ profile.images[0].url }}" width="80">
+        {% endif %}
+        <div>
+            <h2>{{ profile.name }}</h2>
+            {% if profile.product == "premium" %}
+                <span style="color:#1db954; font-weight:bold;">🎵 Premium Hesap</span>
+            {% else %}
+                <span style="color:gray; font-weight:bold;">🎧 Free Hesap</span>
+            {% endif %}
+            <br><small style="color:#aaa;">Spotify hesabınla giriş yaptın</small>
+        </div>
+    </div>
+
+    <div class="now-playing">
+        <div class="bg-blur" id="bg-blur"></div>
+        <a id="song-link" href="#" target="_blank">
+            <img id="song-img" src="" width="100">
+            <div>
+                <h3 id="song-name"></h3>
+                <p id="song-artist"></p>
+            </div>
+        </a>
+        <p id="no-song">Şu anda şarkı çalmıyor</p>
+        <div id="progress-wrapper">
+            <div class="progress-container">
+                <div class="progress-bar" id="progress"></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:12px; color:#aaa;">
+                <span id="current-time">0:00</span>
+                <span id="total-time">0:00</span>
+            </div>
+        </div>
+    </div>
+
+    <h1>Son Dinlenen Şarkılar</h1>
+    {% for track in history %}
+    <div>
+        <a href="{{ track.url }}" target="_blank">
+            <img src="{{ track.image }}" width="80">
+            <span>{{ loop.index }}. {{ track.name }} - {{ track.artist }}</span>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+function msToTime(ms){
+    let totalSec = Math.floor(ms/1000);
+    let min = Math.floor(totalSec/60);
+    let sec = totalSec % 60;
+    return min + ":" + (sec<10?"0"+sec:sec);
+}
+
+let progress = 0;
+let duration = 1;
+let lastUpdate = Date.now();
+let currentTrackId = null;
+
+// Renk alma fonksiyonu
+function getAverageColor(imgUrl){
+    if(!imgUrl) return;
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = imgUrl;
+    img.onload = function(){
+        try {
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img,0,0);
+            const data = ctx.getImageData(0,0,img.width,img.height).data;
+
+            let r=0,g=0,b=0,count=0;
+            for(let i=0;i<data.length;i+=40){
+                r+=data[i]; g+=data[i+1]; b+=data[i+2]; count++;
+            }
+            r=Math.floor(r/count); g=Math.floor(g/count); b=Math.floor(b/count);
+            document.querySelector(".now-playing").style.background = `linear-gradient(135deg, rgb(${r},${g},${b}), #121212)`;
+        } catch(e){
+            document.querySelector(".now-playing").style.background = "#121212"; // fallback
+        }
+    }
+}
+
+async function updateNowPlaying(){
+    try {
+        const res = await fetch("/now_playing_api");
+        if(!res.ok) throw new Error("API çağrısı başarısız");
+        const data = await res.json();
+
+        const progressWrapper = document.getElementById("progress-wrapper");
+        const noSongMsg = document.getElementById("no-song");
+        const songBox = document.querySelector(".now-playing");
+        const img = document.getElementById("song-img");
+
+        if(!data || !data.name){
+            progressWrapper.style.display = "none";
+            noSongMsg.style.display = "block";
+            songBox.style.background = "#121212";
+            document.getElementById("song-name").innerText = "";
+            document.getElementById("song-artist").innerText = "";
+            document.getElementById("song-img").src = "";
+            document.getElementById("song-link").href = "#";
+            document.getElementById("bg-blur").style.backgroundImage = "none";
+            return;
+        }
+
+        progressWrapper.style.display = "block";
+        noSongMsg.style.display = "none";
+
+        if(currentTrackId !== data.url){
+            const isFirstLoad = !currentTrackId;
+            currentTrackId = data.url;
+
+            if(!isFirstLoad) songBox.classList.add("song-transition-out");
+
+            setTimeout(()=>{
+                document.getElementById("song-name").innerText = data.name;
+                document.getElementById("song-artist").innerText = data.artist;
+                document.getElementById("song-img").src = data.image;
+                document.getElementById("song-link").href = data.url;
+                document.getElementById("bg-blur").style.backgroundImage = `url(${data.image})`;
+                getAverageColor(data.image);
+
+                if(!isFirstLoad){
+                    img.classList.add("song-img-animate");
+                    songBox.classList.remove("song-transition-out");
+                    setTimeout(()=>img.classList.remove("song-img-animate"),400);
+                }
+            }, isFirstLoad ? 0 : 200);
+        }
+
+        progress = data.progress;
+        duration = data.duration;
+        lastUpdate = Date.now();
+        document.getElementById("total-time").innerText = msToTime(duration);
+    } catch(e){
+        console.error("Now Playing Güncelleme Hatası:", e);
+    }
+}
+
+function animateProgress(){
+    let elapsed = Date.now() - lastUpdate;
+    let current = progress + elapsed;
+    if(current > duration) current = duration;
+    const percent = (current / duration) * 100;
+    document.getElementById("progress").style.width = percent + "%";
+    document.getElementById("current-time").innerText = msToTime(current);
+    requestAnimationFrame(animateProgress);
+}
+
+animateProgress();
+setInterval(updateNowPlaying, 5000);
+updateNowPlaying();
+</script>
+</body>
+</html>

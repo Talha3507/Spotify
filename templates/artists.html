@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Spotify Top Sanatçıların</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="container">
+
+    <div class="topbar">
+	<div class="nav-left">
+	    <a class="btn" href="/tracks">🎵 Top Şarkılar</a>
+	    <a class="btn" href="/artists">🎤 Top Sanatçılar</a>
+        <a class="btn" href="/albums">💿 Top Albümler</a>
+        <a class="btn" href="/history">▐▐  Dinleme Geçmişi</a>
+		<a class="btn" href="/overview">🌐 Genel Bakış</a>
+	</div>
+	<a class="logout-btn" href="/logout">🚪 Çıkış</a>
+    </div>
+
+    <div class="profile">
+	{% if profile.image %}
+	    <img src="{{ profile.image }}">
+	{% endif %}
+	<div>
+	    <h2>{{ profile.name }}</h2>
+	    {% if profile.product == "premium" %}
+		<span style="color:#1db954; font-weight:bold;">🎵 Premium Hesap</span>
+	    {% else %}
+		<span style="color:gray; font-weight:bold;">🎧 Free Hesap</span>
+	    {% endif %}
+	    <br><small style="color:#aaa;">Spotify hesabınla giriş yaptın</small>
+	</div>
+    </div>
+
+    <h1>En Çok Dinlediğin Sanatçılar 🎤</h1>
+
+    <div class="range-buttons">
+	<a class="btn {% if current_range == 'short_term' %}active{% endif %}" href="/artists?range=short_term">Son 4 Hafta</a>
+	<a class="btn {% if current_range == 'medium_term' %}active{% endif %}" href="/artists?range=medium_term">Son 6 Ay</a>
+	<a class="btn {% if current_range == 'long_term' %}active{% endif %}" href="/artists?range=long_term">Tüm Zamanlar</a>
+    </div>
+
+    <h2>Popülerlik Grafiği 📊</h2>
+    <canvas id="artistChart" width="400" height="200"></canvas>
+
+
+    <script>
+    const chartLabels = {{ chart_labels | tojson }};
+    const chartData = {{ chart_data | tojson }};
+    const chartGenres = {{ chart_genres | tojson }};
+
+
+    const ctx = document.getElementById('artistChart').getContext('2d');
+
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, "#1ed760");
+    gradient.addColorStop(1, "#1db954");
+
+    new Chart(ctx, {
+	type: 'bar',
+	data: {
+	    labels: chartLabels,
+	    datasets: [{
+		data: chartData,
+		backgroundColor: gradient,
+		borderRadius: 8
+	    }]
+	},
+	options: {
+	    responsive: true,
+	    animation: {
+		duration: 1200,
+		easing: 'easeOutQuart'
+	    },
+	    plugins: {
+		legend: { display: false },
+		tooltip: {
+		    backgroundColor: "#222",
+		    titleColor: "#fff",
+		    bodyColor: "#1ed760",
+		    borderColor: "#1db954",
+		    borderWidth: 1,
+		    callbacks: {
+			label: function(context) {
+			    const genre = chartGenres[context.dataIndex];
+			    return genre + " - Popülerlik: " + context.parsed.y;
+			}
+		    }
+		}
+	    },
+	    scales: {
+		x: {
+		    ticks: { color: "#aaa" },
+		    grid: { display: false }
+		},
+		y: {
+		    beginAtZero: true,
+		    max: 100,
+		    ticks: { color: "#aaa" },
+		    grid: { color: "#333" }
+		}
+	    }
+	}
+    });
+
+</script>
+
+    {% for artist in artists %}
+    <div class="artist-card">
+	{% if artist.image %}
+	<img class="artist-img" src="{{ artist.image }}">
+	{% endif %}
+	<div style="flex:1;">
+	    <strong>{{ loop.index }}. {{artist.name }}</strong><br>
+	    <small>{{ artist.genres }}</small><br>
+	    Popularity: {{ artist.popularity }}/100
+
+	    <div class="progress">
+		<div class="progress-bar" style="width: {{ artist.popularity }}%"></div>
+	    </div>
+	</div>
+    </div>
+    {% endfor %}
+
+</div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

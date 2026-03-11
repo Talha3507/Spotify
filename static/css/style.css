@@ -1,0 +1,172 @@
+body {
+    margin: 0;
+    background: #121212;
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.container {
+    max-width: 1100px;
+    margin: auto;
+    padding: 20px;
+}
+
+.album-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.album-card {
+    width: 200px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0,1);
+}
+
+.album-info {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 14px;
+}
+
+.album-info .left {
+    text-align: left;
+    font-weight: bold;
+}
+
+.album-info .right {
+    text-align: right;
+    color: gray;
+    font-style: italic;
+}
+
+.progress-container{
+    width:300px;
+    height:6px;
+    background:#333;
+    border-radius:10px;
+    overflow:hidden;
+    margin-top:10px;
+}
+
+.progress-bar{
+    height:100%;
+    background:#1db954;
+    width:0%;
+}
+
+.topbar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.nav-left {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.btn {
+    padding: 10px 18px;
+    border-radius: 25px;
+    background: #1db954;
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.btn.active {
+    background: #14883b;
+}
+
+.btn:hover {
+    background: #1ed760;
+}
+
+.logout-btn {
+    background: #e53935;
+    padding: 10px 18px;
+    border-radius: 25px;
+    text-decoration: none;
+    color: white;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.logout-btn:hover {
+    background: #ff4d4d;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.profile img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-right: 20px;
+}
+
+.track-card, .artist-card {
+    display: flex;
+    align-items: center;
+    background: #181818;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 15px;
+    transition: 0.3s;
+}
+
+.track-card:hover, .artist-card:hover {
+    transform: scale(1.02);
+    background: #202020;
+}
+
+.track-img, .artist-img {
+    width: 90px;
+    height: 90px;
+    border-radius: 12px;
+    margin-right: 20px;
+}
+
+.progress {
+    height: 8px;
+    border-radius: 10px;
+    background: #333;
+    overflow: hidden;
+    margin-top: 8px;
+}
+
+.progress-bar {
+    height: 100%;
+    background: #1db954;
+}
+
+.range-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+
+@media (max-width: 600px) {
+    .track-card, .artist-card, .profile {
+	flex-direction: column;
+	align-items: flex-start;
+    }
+    .track-img, .artist-img, .profile img {
+	margin-bottom: 10px;
+    }
+}

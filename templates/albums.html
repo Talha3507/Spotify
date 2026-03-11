@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Spotify En Çok Dinlediğin Albümler</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<head>
+<body>
+<div class="container">
+
+    <div class="topbar">
+    <div class="nav-left">
+        <a class="btn" href="/tracks">🎵 Top Şarkılar</a>
+        <a class="btn" href="/artists">🎤 Top Sanatçılar</a>
+        <a class="btn" href="/albums">💿 Top Albümler</a>
+        <a class="btn" href="/history">▐▐  Dinleme Geçmişi</a>
+        <a class="btn" href="/overview">🌐 Genel Bakış</a>
+    </div>
+    <a class="logout-btn" href="/logout">🚪Çıkış</a>
+    </div>
+
+    <div class="profile">
+    {% if profile.image %}
+        <img src="{{ profile.image }}">
+    {% endif %}
+    <div>
+        <h2>{{ profile.name }}</h2>
+
+        {% if profile.product == "premium" %}
+        <span style="color:#1db954; font-weight:bold;">
+            🎵 Premium Hesap
+        </span>
+        {% else %}
+        <span style="color:gray; font-weight:bold;">
+            🎧 Free Hesap
+        </span>
+        {% endif %}
+        <br><small style="color:#aaa;">Spotify hesabınla giriş yaptın</small>
+    </div>
+    </div>
+</body>
+</html>
+
+
+<h1>En Çok Dinlediğin Albümler<h1>
+<div class="album-list">
+{% for album in albums %}
+<div class="album-card">
+    <img src="{{ album.image }}" width="150">
+    <div class="album-info">
+        <span class="left">{{ loop.index }}. {{ album.name }}</span>
+        <span class="right">{{ album.artist }}</span>
+    </div>
+</div>
+{% endfor %}
+</div>
