@@ -7,7 +7,7 @@ from spotipy.oauth2 import SpotifyOAuth
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = "super_secret_key"
+app.secret_key = os.getenv("SECRET_KEY")
 
 sp_oauth = SpotifyOAuth(
     client_id=os.getenv("CLIENT_ID"),
