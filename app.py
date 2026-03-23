@@ -44,6 +44,7 @@ def get_profile(sp):
 @app.route("/login")
 def login():
     auth_url = sp_oauth.get_authorize_url()
+    print("MOBIL AUTH URL:", auth_url)
     return redirect(auth_url)
 
 @app.route("/")
