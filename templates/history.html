@@ -35,11 +35,12 @@
     </div>
 
     <div class="profile">
-        {% if profile.images %}
-            <img src="{{ profile.images[0].url }}" loading="lazy" width="80">
+        {% if profile.image %}
+            <img src="{{ profile.image }}" loading="lazy">
         {% endif %}
         <div>
             <h2>{{ profile.name }}</h2>
+
             {% if profile.product == "premium" %}
                 <span style="color:#1db954; font-weight:bold;">🎵 Premium Hesap</span>
             {% else %}
