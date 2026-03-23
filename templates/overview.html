@@ -131,13 +131,18 @@
         </div>
         {% endfor %}
     </div>
-</body>
 <script>
-const toggle = document.querySelector(".menu-toggle");
-const menu = document.getElementById("navMenu");
+document.addEventListener("DOMContentLoaded", function() {
+    const toggle = document.querySelector(".menu-toggle");
+    const menu = document.getElementById("navMenu");
 
-toggle.addEventListener("click", () => {
-    menu.classList.toggle("active");
+    if(toggle && menu){
+        toggle.addEventListener("click", function() {
+            menu.classList.toggle("active");
+        });
+    }
 });
 </script>
+</body>
+
 </html>
