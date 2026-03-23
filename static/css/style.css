@@ -31,11 +31,11 @@ body {
     border: 1px solid #ddd;
     border-radius: 10px;
     text-align: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0,3);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
     transition: transform 0.15s ease, background 0.2s ease;
 }
 
-@media (max-width: 600px;) {
+@media (max-width: 600px) {
     .album-card {
         width: 100%;
     }
@@ -156,7 +156,7 @@ body {
     transition: transform 0.15s ease, background 0.2s ease;
 }
 
-track-card:hover, .artist-card:hover {
+.track-card:hover, .artist-card:hover {
     transform: scale(1.02);
     background: #202020;
 }
@@ -234,7 +234,7 @@ track-card:hover, .artist-card:hover {
         border-radius: 10px;
     }
 
-    .nav-lef:active {
+    .nav-left.active {
         display: flex;
     }
 }
