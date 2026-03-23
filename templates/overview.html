@@ -66,7 +66,8 @@
 <div class="container">
 
     <div class="topbar">
-        <div class="nav-left">
+        <div class="menu-toggle">☰</div>
+        <div class="nav-left" id="navMenu">
             <a class="btn" href="/tracks">🎵 Top Şarkılar</a>
             <a class="btn" href="/artists">🎤 Top Sanatçılar</a>
             <a class="btn" href="/albums">💿 Top Albümler</a>
@@ -78,7 +79,7 @@
 
     <div class="profile">
         {% if profile.image %}
-            <img src="{{ profile.image }}" width="80">
+            <img src="{{ profile.image }}" loading="lazy" width="80">
         {% endif %}
         <div>
             <h2>{{ profile.name }}</h2>
@@ -98,7 +99,7 @@
         {% for track in top_tracks[:3] %}
         <div class="top-item">
             <a href="{{ track.url }}" target="_blank">
-                <img src="{{ track.image }}">
+                <img src="{{ track.image }}" loading="lazy">
                 <strong>{{ loop.index }}. {{ track.name }}</strong>
                 <p>{{ track.artist }}</p>
             </a>
@@ -111,7 +112,7 @@
         {% for artist in top_artists[:3] %}
         <div class="top-item">
             <a href="{{ artist.url }}" target="_blank">
-                <img src="{{ artist.image }}">
+                <img src="{{ artist.image }}" loading="lazy">
                 <strong>{{ loop.index }}. {{ artist.name }}</strong>
             </a>
         </div>
@@ -123,7 +124,7 @@
         {% for album in top_albums[:3] %}
         <div class="top-item">
             <a href="{{ album.url }}" target="_blank">
-                <img src="{{ album.image }}">
+                <img src="{{ album.image }}" loading="lazy">
                 <strong>{{ loop.index }}. {{ album.name }}</strong>
                 <p>{{ album.artist }}</p>
             </a>

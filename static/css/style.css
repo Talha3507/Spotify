@@ -3,6 +3,7 @@ body {
     background: #121212;
     color: white;
     font-family: 'Segoe UI', sans-serif;
+    font-size: 16px;
 }
 
 .container {
@@ -14,11 +15,6 @@ body {
     .container {
         width: 95%;
         padding: 10px;
-    }
-
-    .song-card {
-        width: 100%;
-        margin-bottom: 15px;
     }
 }
 
@@ -35,7 +31,8 @@ body {
     border: 1px solid #ddd;
     border-radius: 10px;
     text-align: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0,1);
+    box-shadow: 0 2px 5px rgba(0,0,0,0,3);
+    transition: transform 0.15s ease, background 0.2s ease;
 }
 
 @media (max-width: 600px;) {
@@ -44,6 +41,10 @@ body {
     }
 }
 
+.album-card:active {
+    transform: scale(0.97);
+    background: #222;
+}
 
 .album-info {
     display: flex;
@@ -53,12 +54,10 @@ body {
 }
 
 .album-info .left {
-    text-align: left;
     font-weight: bold;
 }
 
 .album-info .right {
-    text-align: right;
     color: gray;
     font-style: italic;
 }
@@ -86,7 +85,6 @@ body {
 
 .topbar {
     display: flex;
-    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
@@ -94,8 +92,13 @@ body {
 
 .nav-left {
     display: flex;
-    flex-wrap: wrap;
     gap: 10px;
+}
+
+.menu-toggle {
+    display: none;
+    font-size: 26px;
+    cursor: pointer;
 }
 
 .btn {
@@ -150,12 +153,21 @@ body {
     border-radius: 15px;
     padding: 20px;
     margin-bottom: 15px;
-    transition: 0.3s;
+    transition: transform 0.15s ease, background 0.2s ease;
 }
 
-.track-card:hover, .artist-card:hover {
+track-card:hover, .artist-card:hover {
     transform: scale(1.02);
     background: #202020;
+}
+
+.track-card:active, .artist-card:active {
+    transform: scale(0.97);
+    background: #222;
+}
+
+.track-card:hover {
+    box-shadow: 0 0 15px rgba(29,185,84,0.3);
 }
 
 .track-img, .artist-img {
@@ -180,19 +192,23 @@ body {
 
 .range-buttons {
     display: flex;
-    flex-wrap: wrap;
     gap: 10px;
     margin-bottom: 25px;
 }
 
 
 @media (max-width: 600px) {
+
+    body {
+        font-size: 15px;
+    }
+
     .track-card, .artist-card, .profile {
-	flex-direction: column;
-	align-items: flex-start;
+        flex-direction: column;
+        align-items: flex-start;
     }
     .track-img, .artist-img, .profile img {
-	margin-bottom: 10px;
+        margin-bottom: 10px;
     }
 
     .topbar {
@@ -205,7 +221,20 @@ body {
         flex-direction: column;
     }
 
-    .progress-container {
-        max-width: 100%;
+    .menu-toggle {
+        display: block;
+    }
+
+    .nav-left {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        background: #181818;
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+    .nav-lef:active {
+        display: flex;
     }
 }

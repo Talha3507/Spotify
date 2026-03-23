@@ -11,7 +11,8 @@
 <div class="container">
 
     <div class="topbar">
-	<div  class="nav-left">
+        <div class="menu-toggle">☰</div>
+        <div class="nav-left" id="navMenu">
 	    <a class="btn" href="/tracks">🎵 Top Şarkılar</a>
 	    <a class="btn" href="/artists">🎤 Top Sanatçılar</a>
         <a class="btn" href="/albums">💿 Top Albümler</a>
@@ -23,7 +24,7 @@
 
     <div class="profile">
 	{% if profile.image %}
-	    <img src="{{ profile.image }}">
+	    <img src="{{ profile.image }}" loading="lazy">
 	{% endif %}
 	<div>
 	    <h2>{{ profile.name }}</h2>
@@ -112,7 +113,7 @@
 
     {% for track in tracks %}
     <div class="track-card">
-	<img class="track-img" src="{{ track.image }}">
+	<img class="track-img" src="{{ track.image }}" loading="lazy">
 	<div style="flex:1;">
 	    <strong>{{ loop.index }}. {{ track.name }}</strong><br>
 	    <small>{{ track.artist }}</small><br>
@@ -129,6 +130,14 @@
 	    {% endif %}
 	</div>
     </div>
+    <script>
+	const toggle = document.querySelector(".menu-toggle");
+	const menu = document.getElementById("navMenu");
+
+	toggle.addEventListener("click", () => {
+		menu.classList.toggle("active");
+	});
+	</script>
     {% endfor %}
 
 </div>

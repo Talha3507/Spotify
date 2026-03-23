@@ -23,7 +23,8 @@
 <div class="container">
 
     <div class="topbar">
-        <div class="nav-left">
+        <div class="menu-toggle">☰</div>
+        <div class="nav-left" id="navMenu">
             <a class="btn" href="/tracks">🎵 Top Şarkılar</a>
             <a class="btn" href="/artists">🎤 Top Sanatçılar</a>
             <a class="btn" href="/albums">💿 Top Albümler</a>
@@ -35,7 +36,7 @@
 
     <div class="profile">
         {% if profile.images %}
-            <img src="{{ profile.images[0].url }}" width="80">
+            <img src="{{ profile.images[0].url }}" loading="lazy" width="80">
         {% endif %}
         <div>
             <h2>{{ profile.name }}</h2>
@@ -51,7 +52,7 @@
     <div class="now-playing">
         <div class="bg-blur" id="bg-blur"></div>
         <a id="song-link" href="#" target="_blank">
-            <img id="song-img" src="" width="100">
+            <img id="song-img" src="" loading="lazy" width="100">
             <div>
                 <h3 id="song-name"></h3>
                 <p id="song-artist"></p>
@@ -73,7 +74,7 @@
     {% for track in history %}
     <div>
         <a href="{{ track.url }}" target="_blank">
-            <img src="{{ track.image }}" width="80">
+            <img src="{{ track.image }}" loading="lazy" width="80">
             <span>{{ loop.index }}. {{ track.name }} - {{ track.artist }}</span>
         </a>
     </div>
@@ -190,6 +191,14 @@ function animateProgress(){
 animateProgress();
 setInterval(updateNowPlaying, 5000);
 updateNowPlaying();
+</script>
+<script>
+const toggle = document.querySelector(".menu-toggle");
+const menu = document.getElementById("navMenu");
+
+toggle.addEventListener("click", () => {
+    menu.classList.toggle("active");
+});
 </script>
 </body>
 </html>
