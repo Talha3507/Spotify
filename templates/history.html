@@ -35,8 +35,9 @@
     </div>
 
     <div class="profile">
-        {% if profile.image %}
-            <img src="{{ profile.image }}" loading="lazy">
+        {% if profile.images %}
+            <img src="{{ profile.images[0] }}" loading="lazy"
+            width="80">
         {% endif %}
         <div>
             <h2>{{ profile.name }}</h2>
