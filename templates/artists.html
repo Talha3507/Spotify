@@ -125,18 +125,18 @@
 	    </div>
 	</div>
     </div>
-    <script>
-	const toggle = document.querySelector(".menu-toggle");
-	const menu = document.getElementById("navMenu");
-
-	toggle.addEventListener("click", () => {
-		menu.classList.toggle("active");
-	});
-	</script>
     {% endfor %}
 
 </div>
 
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
+<script>
+const toggle = document.querySelector(".menu-toggle");
+const menu = document.getElementById("navMenu");
+
+toggle.addEventListener("click", () => {
+    menu.classList.toggle("active");
+});
+</script>
 </html>
