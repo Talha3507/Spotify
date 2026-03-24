@@ -128,7 +128,8 @@ def history():
     profile = sp.current_user()
     profile = {
         "name": profile.get("display_name"),
-        "image": profile["images"][0]["url"] if profile.get("images") else None
+        "image": profile["images"][0]["url"] if profile.get("images") else None,
+        "product": profile.get("product")
     }
     history = sp.current_user_recently_played(limit=25)["items"]
 
