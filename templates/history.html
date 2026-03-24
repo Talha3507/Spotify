@@ -35,9 +35,11 @@
     </div>
 
     <div class="profile">
-        {% if profile.images %}
-            <img src="{{ profile.images[0] }}" loading="lazy"
+        {% if profile.image %}
+            <img src="{{ profile.image }}" loading="lazy"
             width="80">
+        {% else %}
+            <img src="{{ url_for('static', filename='default.png') }}" width="80">
         {% endif %}
         <div>
             <h2>{{ profile.name }}</h2>
