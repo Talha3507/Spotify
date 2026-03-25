@@ -51,28 +51,28 @@ def login():
 def home():
     return render_template("index.html")
 
-@app.route("/following")
-def following():
-    return "OK FOLLOWING"
-
 ##@app.route("/following")
 ##def following():
-##    sp = get_spotify_client()
-##    if sp is None:
-##        return redirect("/login")
+##    return "OK FOLLOWING"
 
-##    profile = get_profile(sp)
+app.route("/following")
+def following():
+    sp = get_spotify_client()
+    if sp is None:
+        return redirect("/login")
 
-##    following_artists = []
-##    results = sp.current_user_followed_artists(limit=50)
-##    for artist in results['artists']['items']:
-##        following_artists.append({
-##            "name": artist['name'],
-##            "image": artist['images'][0]['url'] if artist.get('images') else None,
-##            "url": artist['external_urls']['spotify']
-##        })
+    profile = get_profile(sp)
 
-##    return render_template("following.html", profile=profile, artists=following_artists)
+    following_artists = []
+    results = sp.current_user_followed_artists(limit=50)
+    for artist in results['artists']['items']:
+        following_artists.append({
+            "name": artist['name'],
+            "image": artist['images'][0]['url'] if artist.get('images') else None,
+            "url": artist['external_urls']['spotify']
+        })
+
+    return render_template("following.html", profile=profile, artists=following_artists)
 
 @app.route("/public_playlists/<user_id>")
 def public_playlists(user_id):
