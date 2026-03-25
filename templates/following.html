@@ -1,0 +1,14 @@
+<h1>{{ profile.name }}'in Takip ettiği Sanatçılar</h1>
+<ul>
+  {% for artist in artists %}
+    <li> 
+      <a href="{{ artist.url }}" target="_blank">
+        {% if artist.image %}
+          <img src="{{ artist.image }}" width="50">
+        {% endif %} 
+        {{ artist.name }}
+      </a>
+    </li>
+  {% endfor %}
+</ul>
+

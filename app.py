@@ -51,6 +51,45 @@ def login():
 def home():
     return render_template("index.html")
 
+@app.route("/following")
+def following():
+    sp = get_spotify_client()
+    if sp is None:
+        return redirect("/login")
+
+    profile = get_profile(sp)
+
+    following_artists = []
+    results = sp.current_user_followed_artists(limit=50)
+    for artist in results['artists']['items']:
+        following_artists.append({
+            "name": artist['name'],
+            "image": artist['image'][0]['url'] if artist.get('images') else None,
+            "url": artist['external_urls']['spotify']
+        })
+
+    return render_template("following.html", profile=profile, artists=following_artists)
+
+@app.route("/public_playlists/<user_id>")
+def public_playlists(user_id):
+    sp = get_spotify_client()
+    if sp is None:
+        return redirect("/login")
+
+    profile = get_profile(sp)
+
+    playlists_data = []
+    playlists = sp.user_playlists(user_id)
+    for playlist in playlists['items']:
+        playlists_data.append({
+            "name": playlist['name'],
+            "image": playlist['images'][0]['url'] if playlist.get('images') else None,
+            "tracks": playlist['tracks']['total'],
+            "url": playlist['external_urls']['spotify']
+        })
+
+    return render_template("playlists.html", profile=profile, playlists=playlists_data, user_id=user_id)
+
 @app.route("/overview")
 def overview():
     sp = get_spotify_client()

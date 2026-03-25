@@ -1,0 +1,13 @@
+<h1>{{ user_id }}'in Herkese Açık Çalma Listeleri</h1>
+<ul>
+  {% for playlist in playlists %}
+    <li>
+      <a href="{{ playlist.url }}" target="_blank">
+        {% if playlist.image %}
+          <img src="{{ playlist.image }}" width="50">
+        {% endif %}
+        {{ playlist.name }} ({{ playlist.tracks }} şarkı)
+      </a>
+    </li>
+  {% endfor %}
+</ul>
