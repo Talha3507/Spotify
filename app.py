@@ -15,7 +15,7 @@ sp_oauth = SpotifyOAuth(
     client_id=os.getenv("CLIENT_ID"),
     client_secret=os.getenv("CLIENT_SECRET"),
     redirect_uri=os.getenv("REDIRECT_URI"),
-    scope="user-top-read user-read-private user-read-recently-played user-read-currently-playing user-read-playback-state ",
+    scope="user-top-read user-read-private user-read-recently-played user-read-currently-playing user-read-playback-state user-follow-read ",
     show_dialog=True,
     cache_path=None
 )
@@ -64,7 +64,7 @@ def following():
     for artist in results['artists']['items']:
         following_artists.append({
             "name": artist['name'],
-            "image": artist['image'][0]['url'] if artist.get('images') else None,
+            "image": artist['images'][0]['url'] if artist.get('images') else None,
             "url": artist['external_urls']['spotify']
         })
 
