@@ -15,7 +15,7 @@ sp_oauth = SpotifyOAuth(
     client_id=os.getenv("CLIENT_ID"),
     client_secret=os.getenv("CLIENT_SECRET"),
     redirect_uri=os.getenv("REDIRECT_URI"),
-    scope="user-top-read user-read-private user-read-recently-played user-read-currently-playing user-read-playback-state user-follow-read ",
+    scope="user-top-read user-read-private user-read-recently-played user-read-currently-playing user-read-playback-state user-modify-playback-state user-follow-read ",
     show_dialog=True,
     cache_path=None
 )
@@ -93,6 +93,43 @@ def public_playlists(user_id):
         })
 
     return render_template("playlists.html", profile=profile, playlists=playlists_data, user_id=user_id)
+
+@app.route("/play", methods=["POST"])
+def play():
+    sp = get_spotify_client()
+    if sp is None:
+        return jsonify({"error": "no token"}), 401
+
+    sp.start_playback()
+    return jsonify({"status": "playing"})
+
+@app.route("/pause", methods=["POST"])
+def pause():
+    sp = get_spotify_client()
+    if sp is None:
+        return jsonify({"error": "no token"}), 401
+
+    sp.pause_playback()
+    return jsonify({"status": "paused"})
+
+@app.route("/next", methods=["POST"])
+def next_track():
+    sp = get_spotify_client()
+    if sp is None:
+        return jsonify({"error": "no token"}), 401
+
+    sp.pause_playback()
+    return jsonify({"status": "next"})
+
+@app.route("/previous", methods=["POST"])
+def previous_track():
+    sp = get_spotify_client()
+    if sp is None:
+        return jsonify({"error": "no token"}), 401
+
+    sp.pause_playback()
+    return jsonify({"status": "previous"})
+
 
 @app.route("/overview")
 def overview():
