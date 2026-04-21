@@ -188,6 +188,11 @@ async function updateNowPlaying(){
     } catch(e){
         console.error("Now Playing Güncelleme Hatası:", e);
     }
+
+    const btn = document.getElementById("playPauseBtn");
+    if(btn && data){
+        btn.innerText = data.is_playing ? "⏸" : "▶️";
+    }
 }
 
 function animateProgress(){
@@ -198,6 +203,38 @@ function animateProgress(){
     document.getElementById("progress").style.width = percent + "%";
     document.getElementById("current-time").innerText = msToTime(current);
     requestAnimationFrame(animateProgress);
+}
+
+async function control(action){
+    try{
+        const res = await fetch("/" + action, {method: "POST"});
+        const data = await res.json();
+
+        console.log("CONTROL:", action, data);
+
+        if(data.error){
+            alert(data.error);
+        }
+
+        setTimeout(updateNowPlaying, 500,);
+    }catch(e){
+        console.error("Console error: ", e);
+    }
+}
+
+async function togglePlay(){
+    try{
+        const res = await fetch("/now_playing_api");
+        const data = await res.json();
+
+        if(data && data.is_playing){
+            await control("pause");
+        } else {
+            await control("play");
+        }
+    }catch(e){
+        console.error("Toggle error: ", e);
+    }
 }
 
 animateProgress();
