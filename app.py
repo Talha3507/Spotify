@@ -55,7 +55,7 @@ def home():
 ##def following():
 ##    return "OK FOLLOWING"
 
-app.route("/following")
+@app.route("/following")
 def following():
     sp = get_spotify_client()
     if sp is None:
@@ -118,7 +118,7 @@ def next_track():
     if sp is None:
         return jsonify({"error": "no token"}), 401
 
-    sp.pause_playback()
+    sp.next_track()
     return jsonify({"status": "next"})
 
 @app.route("/previous", methods=["POST"])
@@ -127,7 +127,7 @@ def previous_track():
     if sp is None:
         return jsonify({"error": "no token"}), 401
 
-    sp.pause_playback()
+    sp.previous_track()
     return jsonify({"status": "previous"})
 
 
