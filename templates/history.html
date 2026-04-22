@@ -105,6 +105,7 @@ let progress = 0;
 let duration = 1;
 let lastUpdate = Date.now();
 let currentTrackId = null;
+let lastTrack = null;
 
 // Renk alma fonksiyonu
 function getAverageColor(imgUrl){
@@ -143,16 +144,20 @@ async function updateNowPlaying(){
         const noSongMsg = document.getElementById("no-song");
         const songBox = document.querySelector(".now-playing");
         const img = document.getElementById("song-img");
+        const btn = document.getElementById("playPauseBtn");
+
+        if(!data || !data.name){
+            lastTrack = data;
+        }
+
+        if((!data || !data.name) && lastTrack){
+            data = lastTrack;
+        }
 
         if(!data || !data.name){
             progressWrapper.style.display = "none";
             noSongMsg.style.display = "block";
             songBox.style.background = "#121212";
-            document.getElementById("song-name").innerText = "";
-            document.getElementById("song-artist").innerText = "";
-            document.getElementById("song-img").src = "";
-            document.getElementById("song-link").href = "#";
-            document.getElementById("bg-blur").style.backgroundImage = "none";
             return;
         }
 
@@ -181,8 +186,8 @@ async function updateNowPlaying(){
             }, isFirstLoad ? 0 : 200);
         }
 
-        progress = data.progress;
-        duration = data.duration;
+        progress = data.progress || 0;
+        duration = data.duration || 1;
         lastUpdate = Date.now();
         document.getElementById("total-time").innerText = msToTime(duration);
     } catch(e){
@@ -190,8 +195,8 @@ async function updateNowPlaying(){
     }
 
     const btn = document.getElementById("playPauseBtn");
-    if(btn && data){
-        btn.innerText = data.is_playing ? "⏸" : "▶️";
+    if(btn){
+        btn.innerText = data &&  data.is_playing ? "⏸" : "▶️";
     }
 }
 
@@ -216,29 +221,26 @@ async function control(action){
             alert(data.error);
         }
 
-        setTimeout(updateNowPlaying, 500,);
+        setTimeout(updateNowPlaying, 400,);
     }catch(e){
         console.error("Console error: ", e);
     }
 }
 
 async function togglePlay(){
-    try{
-        const res = await fetch("/now_playing_api");
-        const data = await res.json();
-
-        if(data && data.is_playing){
-            await control("pause");
-        } else {
-            await control("play");
-        }
-    }catch(e){
-        console.error("Toggle error: ", e);
+    if(lastTrack && lastTrack.is_playing){
+        await control("pause");
+        lastTrack.is_playing = false;
+    } else {
+        await control("play");
+        if(lastTrack) lastTrack.is_playing = true;
     }
+
+    updateNowPlaying();
 }
 
 animateProgress();
-setInterval(updateNowPlaying, 5000);
+setInterval(updateNowPlaying, 4000);
 updateNowPlaying();
 </script>
 <script>
