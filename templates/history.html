@@ -230,17 +230,15 @@ async function control(action){
 }
 
 async function togglePlay(){
-    const btn = document.getElementById("playPauseBtn");
-
-    if(btn.innerText === "⏸"){
+    if(lastTrack && lastTrack.is_playing){
         await control("pause");
-        if(lastTrack) lastTrack.is_playing = false;
+        lastTrack.is_playing = false;
     } else {
         await control("play");
         if(lastTrack) lastTrack.is_playing = true;
     }
 
-    updateNowPlaying();
+    setTimeout(updateNowPlaying, 300);
 }
 
 animateProgress();

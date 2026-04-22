@@ -100,7 +100,19 @@ def play():
     if sp is None:
         return jsonify({"error": "no token"}), 401
 
-    sp.start_playback()
+    devices = sp.devices()
+
+    if not devices["devices"]:
+        return jsonify({"error": "no active device"}), 400
+
+    device = next((d for d in devices["devices"] if d["is_active"]), None)
+
+    if not device:
+        device = devices["devices"][0]
+
+    device_id = device["id"]
+
+    sp.start_playback(device_id=device_id)
     return jsonify({"status": "playing"})
 
 @app.route("/pause", methods=["POST"])
@@ -109,7 +121,19 @@ def pause():
     if sp is None:
         return jsonify({"error": "no token"}), 401
 
-    sp.pause_playback()
+    devices = sp.devices()
+
+    if not devices["devices"]:
+        return jsonify({"error": "no active device"}), 400
+
+    device = next((d for d in devices["devices"] if d["is_active"]), None)
+
+    if not device:
+        device = devices["devices"][0]
+
+    device_id = device["id"]
+
+    sp.pause_playback(device_id=device_id)
     return jsonify({"status": "paused"})
 
 @app.route("/next", methods=["POST"])
