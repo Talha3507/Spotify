@@ -140,6 +140,8 @@ async function updateNowPlaying(){
         const res = await fetch("/now_playing_api");
         if(!res.ok) throw new Error("API çağrısı başarısız");
 
+        data = await res.json();
+
         const progressWrapper = document.getElementById("progress-wrapper");
         const noSongMsg = document.getElementById("no-song");
         const songBox = document.querySelector(".now-playing");
