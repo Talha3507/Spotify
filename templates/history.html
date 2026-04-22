@@ -139,7 +139,6 @@ async function updateNowPlaying(){
     try {
         const res = await fetch("/now_playing_api");
         if(!res.ok) throw new Error("API çağrısı başarısız");
-        const data = await res.json();
 
         const progressWrapper = document.getElementById("progress-wrapper");
         const noSongMsg = document.getElementById("no-song");
@@ -147,7 +146,7 @@ async function updateNowPlaying(){
         const img = document.getElementById("song-img");
         const btn = document.getElementById("playPauseBtn");
 
-        if(!data && !data.name){
+        if(data && data.name){
             lastTrack = data;
         }
 
