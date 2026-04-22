@@ -135,6 +135,7 @@ function getAverageColor(imgUrl){
 }
 
 async function updateNowPlaying(){
+    let data = null;
     try {
         const res = await fetch("/now_playing_api");
         if(!res.ok) throw new Error("API çağrısı başarısız");
@@ -146,7 +147,7 @@ async function updateNowPlaying(){
         const img = document.getElementById("song-img");
         const btn = document.getElementById("playPauseBtn");
 
-        if(!data || !data.name){
+        if(!data && !data.name){
             lastTrack = data;
         }
 
@@ -228,9 +229,11 @@ async function control(action){
 }
 
 async function togglePlay(){
-    if(lastTrack && lastTrack.is_playing){
+    const btn = document.getElementById("playPauseBtn");
+
+    if(btn.innerText === "⏸"){
         await control("pause");
-        lastTrack.is_playing = false;
+        if(lastTrack) lastTrack.is_playing = false;
     } else {
         await control("play");
         if(lastTrack) lastTrack.is_playing = true;
