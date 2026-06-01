@@ -15,7 +15,7 @@ sp_oauth = SpotifyOAuth(
     client_id=os.getenv("CLIENT_ID"),
     client_secret=os.getenv("CLIENT_SECRET"),
     redirect_uri=os.getenv("REDIRECT_URI"),
-    scope="user-top-read user-read-private user-read-recently-played user-read-currently-playing user-read-playback-state user-modify-playback-state user-follow-read playlist-read-private playlist-read-collaborative ",
+    scope = "user-top-read user-read-private user-read-recently-played user-read-currently-playing user-read-playback-state user-modify-playback-state user-follow-read playlist-read-private playlist-read-collaborative",
     show_dialog=True,
     cache_path=None
 )
@@ -91,7 +91,7 @@ def playlists():
         playlists_data.append({
             "name": playlist["name"],
             "image": playlist["images"][0]["url"] if playlist.get("images") and len(playlist["images"]) > 0 else None,
-            "tracks": playlist["tracks"]["total"],
+            "tracks": playlist.get("tracks", {}).get("total", 0),
             "url": playlist["external_urls"]["spotify"]
         })
 
