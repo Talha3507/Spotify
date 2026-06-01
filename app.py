@@ -15,7 +15,7 @@ sp_oauth = SpotifyOAuth(
     client_id=os.getenv("CLIENT_ID"),
     client_secret=os.getenv("CLIENT_SECRET"),
     redirect_uri=os.getenv("REDIRECT_URI"),
-    scope="user-top-read user-read-private user-read-recently-played user-read-currently-playing user-read-playback-state user-modify-playback-state user-follow-read ",
+    scope="user-top-read user-read-private user-read-recently-played user-read-currently-playing user-read-playback-state user-modify-playback-state user-follow-read playlist-read-private playlist-read-collaboravite ",
     show_dialog=True,
     cache_path=None
 )
