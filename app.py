@@ -74,6 +74,17 @@ def following():
 
     return render_template("following.html", profile=profile, artists=following_artists)
 
+@app.route("/playlists")
+def playlists():
+    sp = get_spotify_client()
+
+    if sp is None:
+        return redirect("/login")
+
+    user = sp.current_user()
+
+    return redirect(f"/public_playlists/{user['id']}")
+
 @app.route("/public_playlists/<user_id>")
 def public_playlists(user_id):
     sp = get_spotify_client()
@@ -92,7 +103,7 @@ def public_playlists(user_id):
             "url": playlist['external_urls']['spotify']
         })
 
-    return render_template("playlists.html", profile=profile, playlists=playlists_data, user_id=user["id"], user_id=user_id)
+    return render_template("playlists.html", profile=profile, playlists=playlists_data, user_id=user_id)
 
 @app.route("/play", methods=["POST"])
 def play():
