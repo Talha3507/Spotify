@@ -78,32 +78,28 @@ def following():
 def playlists():
     sp = get_spotify_client()
 
-    if sp is None:
-        return redirect("/login")
-
-    user = sp.current_user()
-
-    return redirect(f"/public_playlists/{user['id']}")
-
-@app.route("/public_playlists/<user_id>")
-def public_playlists(user_id):
-    sp = get_spotify_client()
-    if sp is None:
+    is sp is None:
         return redirect("/login")
 
     profile = get_profile(sp)
 
     playlists_data = []
-    playlists = sp.user_playlists(user_id)
-    for playlist in playlists['items']:
+
+    playlists = sp.current_user_playlists(limit=50)
+
+    for playlist in playlists["items"]:
         playlists_data.append({
-            "name": playlist['name'],
-            "image": playlist['images'][0]['url'] if playlist.get('images') else None,
-            "tracks": playlist['tracks']['total'],
-            "url": playlist['external_urls']['spotify']
+            "name": playlist["name"],
+            "image": playlist["image"][0]["url"] if playlist.get("images") else None,
+            "tracks": playlist["tracks"]["total"],
+            "url": playlist["external_urls"]["spotify"]
         })
 
-    return render_template("playlists.html", profile=profile, playlists=playlists_data, user_id=user_id)
+    return render_template(
+        "playlists.html",
+        profile=profile,
+        playlists=playlists_data
+    )
 
 @app.route("/play", methods=["POST"])
 def play():
