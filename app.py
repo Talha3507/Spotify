@@ -92,7 +92,7 @@ def public_playlists(user_id):
             "url": playlist['external_urls']['spotify']
         })
 
-    return render_template("playlists.html", profile=profile, playlists=playlists_data, user_id=user_id)
+    return render_template("playlists.html", profile=profile, playlists=playlists_data, user_id=user["id"], user_id=user_id)
 
 @app.route("/play", methods=["POST"])
 def play():
