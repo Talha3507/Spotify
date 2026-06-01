@@ -78,7 +78,7 @@ def following():
 def playlists():
     sp = get_spotify_client()
 
-    is sp is None:
+    if sp is None:
         return redirect("/login")
 
     profile = get_profile(sp)
