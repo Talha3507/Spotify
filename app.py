@@ -89,21 +89,25 @@ def playlists():
 
     for playlist in playlists["items"]:
         try:
-            details = sp.playlist(playlist["id"])
-            
+            items = sp.playlist_items(playlist["id"])
+
+            print(
+                f"Playlist: {playlist['name']} | Toplam Şarkı: {items['total']}"
+            )
+
             playlists_data.append({
                 "name": playlist["name"],
                 "image": playlist["images"][0]["url"] if playlist.get("images") and len(playlist["images"]) > 0 else None,
-                "tracks": playlist.get("tracks", {}).get("total", 0),
+                "tracks": items["total"],
                 "url": playlist["external_urls"]["spotify"]
             })
 
         except Exception as e:
-            print(f"Playlist okunmadı: {playlist.get('name')} -> {e}")
+            print(f"HATA -> {playlist['name']} : {e}")
 
-            playlist_data.append({
-                "name": playlist.get("name", "Bilinmeyen Playlist"),
-                "image": playlist["images"][0]["url"] if playlist.get("images") else None,
+            playlists_data.append({
+                "name": playlist["name"],
+                "image": playlist["images"][0]["url"] if playlist.get("images") and len(playlist["images"]) > 0 else None,
                 "tracks": 0,
                 "url": playlist["external_urls"]["spotify"]
             })

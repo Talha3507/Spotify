@@ -1,72 +1,104 @@
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
-    <title>Spotify Çalma Listeleri</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Çalma Listeleri</title>
+
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
     <style>
-        button { background: #1db954; border: none; color: white; font-size: 18px; padding: 10px 14px; border-radius: 50%; cursor: pointer; transition: transform 0.2s, background 0.3s; }
-        button:hover { transform: scale(1.1); background: #1ed760; }
-        body { font-family: sans-serif; background:#121212; color:white;}
-        .now-playing { transition: background 0.5s ease; position:relative; padding:20px; border-radius:15px; margin-bottom:30px; max-width:600px;}
-        .bg-blur { filter: blur(20px); position:absolute; top:0; left:0; width:100%; height:150px; z-index:-1; background-size:cover; opacity:0.3; border-radius:15px; }
-        .progress-container { height:6px; background:#333; border-radius:10px; overflow:hidden; margin-top:10px; width:100%; }
-        .progress-bar { height:100%; background:#1db954; width:0%; transition: width 0.5s linear; }
-        a { text-decoration:none; color:white; display:flex; gap:15px; align-items:center;}
-        img { border-radius:10px; transition: transform 0.4s ease; }
-        #progress-wrapper { display:none; }
-        #no-song { display:none; color:#aaa; text-align:center; }
-        .song-transition-out { opacity:0; transform: translateY(20px); transition: all 0.4s ease; }
-        .song-img-animate { transform: scale(1.05); }
+        body{
+            background:#121212;
+            color:white;
+            font-family:sans-serif;
+        }
+
+        .playlist-list{
+            list-style:none;
+            padding:0;
+        }
+
+        .playlist-item{
+            margin:15px 0;
+            background:#1e1e1e;
+            padding:15px;
+            border-radius:12px;
+        }
+
+        .playlist-item a{
+            display:flex;
+            align-items:center;
+            gap:15px;
+            text-decoration:none;
+            color:white;
+        }
+
+        .playlist-item img{
+            width:70px;
+            height:70px;
+            border-radius:10px;
+            object-fit:cover;
+        }
+
+        .playlist-info{
+            display:flex;
+            flex-direction:column;
+        }
+
+        .track-count{
+            color:#b3b3b3;
+            margin-top:4px;
+        }
     </style>
 </head>
 <body>
-<div class="container">
 
-    <div class="topbar">
-        <div class="menu-toggle">☰</div>
-        <div class="nav-left" id="navMenu">
-            <a class="btn" href="/tracks">🎵 Top Şarkılar</a>
-            <a class="btn" href="/artists">🎤 Top Sanatçılar</a>
-            <a class="btn" href="/albums">💿 Top Albümler</a>
-            <a class="btn" href="/history">▐▐  Dinleme Geçmişi</a>
-            <a class="btn" href="/playlists">Çalma Listeleri</a>
-            <a class="btn" href="/overview">🌐 Genel Bakış</a>
-            <a class="btn" href="/following">👤 Takip ettiklerin</a>
-        </div>
-        <a class="logout-btn" href="/logout">⏻️Çıkış</a>
-    </div>
+<div class="container">
 
     <div class="profile">
         {% if profile.image %}
-            <img src="{{ profile.image }}" loading="lazy"
-            width="80">
-        {% else %}
-            <img src="{{ url_for('static', filename='default.png') }}" width="80">
+            <img src="{{ profile.image }}" width="80">
         {% endif %}
+
         <div>
             <h2>{{ profile.name }}</h2>
 
             {% if profile.product == "premium" %}
-                <span style="color:#1db954; font-weight:bold;">🎵 Premium Hesap</span>
+                <span style="color:#1db954;">🎵 Premium</span>
             {% else %}
-                <span style="color:gray; font-weight:bold;">🎧 Free Hesap</span>
+                <span style="color:gray;">🎧 Free</span>
             {% endif %}
-            <br><small style="color:#aaa;">Spotify hesabınla giriş yaptın</small>
         </div>
     </div>
 
-<h1>{{ user_id }}'in Herkese Açık Çalma Listeleri</h1>
-<ul>
-  {% for playlist in playlists %}
-    <li>
-      <a href="{{ playlist.url }}" target="_blank">
-        {% if playlist.image %}
-          <img src="{{ playlist.image }}" width="50">
-        {% endif %}
-        {{ playlist.name }} ({{ playlist.tracks }} şarkı)
-      </a>
-    </li>
-  {% endfor %}
-</ul>
+    <h1>Çalma Listelerim</h1>
+
+    <ul class="playlist-list">
+
+        {% for playlist in playlists %}
+        <li class="playlist-item">
+            <a href="{{ playlist.url }}" target="_blank">
+
+                {% if playlist.image %}
+                    <img src="{{ playlist.image }}" alt="{{ playlist.name }}">
+                {% endif %}
+
+                <div class="playlist-info">
+                    <strong>{{ playlist.name }}</strong>
+                    <span class="track-count">
+                        {{ playlist.tracks }} şarkı
+                    </span>
+                </div>
+
+            </a>
+        </li>
+        {% endfor %}
+
+    </ul>
+
+</div>
+
+</body>
+</html>
