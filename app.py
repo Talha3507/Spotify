@@ -85,33 +85,32 @@ def playlists():
 
     playlists_data = []
 
-    results = sp.current_user_playlists(limit=50)
+    playlists = sp.current_user_playlists(limit=50)
 
-    while True:
-        for playlist in results["items"]:
+    for playlist in playlists["items"]:
+        try:
+            items = sp.playlist_items(playlist["id"])
 
-            track_count = playlist.get("tracks", {}).get("total", 0)
+            print(
+                f"Playlist: {playlist['name']} | Toplam Şarkı: {items['total']}"
+            )
 
             playlists_data.append({
                 "name": playlist["name"],
-                "image": playlist["images"][0]["url"]
-                    if playlist.get("images") and len(playlist["images"]) > 0
-                    else None,
-                "tracks": track_count,
-                "owner": playlist["owner"]["display_name"],
+                "image": playlist["images"][0]["url"] if playlist.get("images") and len(playlist["images"]) > 0 else None,
+                "tracks": items["total"],
                 "url": playlist["external_urls"]["spotify"]
             })
 
-            print(
-                f"{playlist['name']} | "
-                f"Sahip: {playlist['owner']['display_name']} | "
-                f"Şarkı: {track_count}"
-            )
+        except Exception as e:
+            print(f"HATA -> {playlist['name']} : {e}")
 
-        if results["next"]:
-            results = sp.next(results)
-        else:
-            break
+            playlists_data.append({
+                "name": playlist["name"],
+                "image": playlist["images"][0]["url"] if playlist.get("images") and len(playlist["images"]) > 0 else None,
+                "tracks": 0,
+                "url": playlist["external_urls"]["spotify"]
+            })
 
     return render_template(
         "playlists.html",
