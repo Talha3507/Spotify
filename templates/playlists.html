@@ -56,6 +56,19 @@
 <body>
 
 <div class="container">
+    <div class="topbar">
+        <div class="menu-toggle">☰</div>
+        <div class="nav-left" id="navMenu">
+            <a class="btn" href="/tracks">🎵 Top Şarkılar</a>
+            <a class="btn" href="/artists">🎤 Top Sanatçılar</a>
+            <a class="btn" href="/albums">💿 Top Albümler</a>
+            <a class="btn" href="/history">▐▐ Dinleme Geçmişi</a>
+            <a class="btn" href="/playlists">Çalma Listeleri</a>
+            <a class="btn" href="/overview">🌐 Genel Bakış</a>
+            <a class="btn" href="/following">👤 Takip ettiklerin</a>
+        </div>
+        <a class="logout-btn" href="/logout">⏻️Çıkış</a>
+    </div>
 
     <div class="profile">
         {% if profile.image %}
