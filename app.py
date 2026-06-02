@@ -88,12 +88,25 @@ def playlists():
     playlists = sp.current_user_playlists(limit=50)
 
     for playlist in playlists["items"]:
-        playlists_data.append({
-            "name": playlist["name"],
-            "image": playlist["images"][0]["url"] if playlist.get("images") and len(playlist["images"]) > 0 else None,
-            "tracks": playlist.get("tracks", {}).get("total", 0),
-            "url": playlist["external_urls"]["spotify"]
-        })
+        try:
+            details = sp.playlist(playlist["id"])
+            
+            playlists_data.append({
+                "name": playlist["name"],
+                "image": playlist["images"][0]["url"] if playlist.get("images") and len(playlist["images"]) > 0 else None,
+                "tracks": playlist.get("tracks", {}).get("total", 0),
+                "url": playlist["external_urls"]["spotify"]
+            })
+
+        except Exception as e:
+            print(f"Playlist okunmadı: {playlist.get('name')} -> {e}")
+
+            playlist_data.append({
+                "name": playlist.get("name", "Bilinmeyen Playlist"),
+                "image": playlist["images"][0]["url"] if playlist.get("images") else None,
+                "tracks": 0,
+                "url": playlist["external_urls"]["spotify"]
+            })
 
     return render_template(
         "playlists.html",
