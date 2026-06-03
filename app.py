@@ -268,9 +268,21 @@ def history():
     history_data = sp.current_user_recently_played(limit=10)["items"]
     history_tracks = []
     for item in history:
-        track = item["track"]
+        track = item.get("track")
+        if not track:
+            continue
 
-        played_at = item["played_at"]
+        album = track.get("album", {})
+        images = album.get("images", [])
+
+        image_url = images[0]["url"] if images else None
+
+        played_at = item.get("played_at")
+
+        time_text = ""
+
+        if played_at:
+            from datetime import datetime, timezone
 
         played_time = datetime.strptime(played_at, "%Y-%m-%dT%H:%M:%S.%fZ")
         played_time = played_time.replace(tzinfo=timezone.utc)
@@ -286,7 +298,7 @@ def history():
             time_text = f"{hours} saat önce"
             
         history_tracks.append({
-            "name": track["name"],
+            "name": track.get("name", "Unkown"),
             "artist": track["artists"][0]["name"],
             "image": track["album"]["images"][0]["url"],
             "url": track["external_urls"]["spotify"],
