@@ -244,57 +244,65 @@ def history():
 
     current = sp.current_playback()
 
-    if current and current["item"]:
+    if current and current.get("item"):
         now_playing = {
-            "name": current["item"]["name"],
-            "artist": current["item"]["artists"][0]["name"],
-            "image": current["item"]["album"]["images"][0]["url"],
+            "name": current["item"].get("name"),
+            "artist": current["item"]["artists"][0].get("name") if current["item"].get("artists") else "Unknown",
+            "image": current["item"]["album"]["images"][0]["url"] if current["item"].get("album") and current["item"]["album"].get("images") else None,
             "progress": current.get("progress_ms", 0),
             "duration": current["item"].get("duration_ms", 0),
-            "url": current["item"]["external_urls"]["spotify"]
+            "url": current["item"].get("external_urls", {}).get("spotify")
         }
     else:
         now_playing = None
 
-    
-    history = sp.current_user_recently_played(limit=25)["items"]
-
+    history = sp.current_user_recently_played(limit=25).get("items", [])
 
     history_tracks = []
+
     for item in history:
         track = item.get("track")
         if not track:
             continue
 
-        album = track.get("album", {})
-        images = album.get("images", [])
-
-        image_url = images[0]["url"] if images else None
-
         played_at = item.get("played_at")
-
         time_text = "Bilinmiyor"
 
         if played_at:
             try:
-                played_time = datetime.fromisoformat(played_at.replace("Z", "+00:00"))
+                from datetime import datetime, timezone
+
+                # Spotify timestamp fix (milisaniye + normal format uyumlu)
+                try:
+                    played_time = datetime.strptime(played_at, "%Y-%m-%dT%H:%M:%S.%fZ")
+                except ValueError:
+                    played_time = datetime.strptime(played_at, "%Y-%m-%dT%H:%M:%SZ")
+
+                played_time = played_time.replace(tzinfo=timezone.utc)
+
                 now = datetime.now(timezone.utc)
+                diff_minutes = int((now - played_time).total_seconds() / 60)
 
-                diff_minutes = int((now-played_time).total_seconds() / 60)
-
-                if diff_minutes < 60:
+                if diff_minutes < 1:
+                    time_text = "az önce"
+                elif diff_minutes < 60:
                     time_text = f"{diff_minutes} dakika önce"
                 else:
                     hours = diff_minutes // 60
                     time_text = f"{hours} saat önce"
-            except:
-                time_text = "-"
-            
+
+            except Exception:
+                time_text = "—"
+
+        album = track.get("album", {})
+        images = album.get("images", [])
+        image_url = images[0]["url"] if images else None
+
         history_tracks.append({
-            "name": track.get("name", "Unkown"),
-            "artist": track["artists"][0]["name"],
-            "image": track["album"]["images"][0]["url"] if track["album"].get("images") else None,
-            "url": track["external_urls"]["spotify"],
+            "name": track.get("name", "Unknown"),
+            "artist": track["artists"][0]["name"] if track.get("artists") else "Unknown",
+            "image": image_url,
+            "url": track.get("external_urls", {}).get("spotify"),
             "time_text": time_text
         })
 
@@ -319,34 +327,28 @@ def now_playing_api():
 
     item = current["item"]
 
-    is_podcast = (
-        current.get("currently_playing_type") == "episode"
-        or ("show" in item and "album" not in item)
-    )
+    is_podcast = current.get("currently_playing_type") == "episode"
 
     if is_podcast:
-
         now_playing = {
             "type": "podcast",
             "name": item.get("name"),
-            "artist": "🎙 " + item["show"]["name"],
-            "image": item["images"][0]["url"] if item.get("images") else None,
+            "artist": item.get("show", {}).get("name"),
+            "image": item.get("images", [{}])[0].get("url"),
             "progress": current.get("progress_ms", 0),
             "duration": item.get("duration_ms", 0),
-            "url": item["external_urls"]["spotify"],
+            "url": item.get("external_urls", {}).get("spotify"),
             "is_playing": current.get("is_playing")
         }
-
     else:
-
         now_playing = {
             "type": "track",
-            "name": item["name"],
-            "artist": item["artists"][0]["name"],
-            "image": item["album"]["images"][0]["url"],
+            "name": item.get("name"),
+            "artist": item["artists"][0]["name"] if item.get("artists") else "Unknown",
+            "image": item["album"]["images"][0]["url"] if item.get("album") else None,
             "progress": current.get("progress_ms", 0),
             "duration": item.get("duration_ms", 0),
-            "url": item["external_urls"]["spotify"],
+            "url": item.get("external_urls", {}).get("spotify"),
             "is_playing": current.get("is_playing")
         }
 
