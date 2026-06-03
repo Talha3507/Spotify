@@ -291,16 +291,14 @@ def now_playing_api():
 
     current = sp.current_playback()
 
-    if not current:
+    if not current or not current.get("item"):
         return jsonify(None)
 
-    content_type = current.get("currently_playing_type")
-    item = current.get("item")
+    item = current["item"]
 
-    if not item:
-        return jsonify(None)
+    is_podcast = "show" in item
 
-    if content_type == "episode":
+    if is_podcast:
 
         now_playing = {
             "type": "podcast",
