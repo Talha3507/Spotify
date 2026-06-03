@@ -296,7 +296,7 @@ def now_playing_api():
         item = current["item"]
         content_type = current.get("currently_playing_type")
 
-        if content_type = "episode":
+        if content_type == "episode":
 
             image = None
             if item.get("images"):
