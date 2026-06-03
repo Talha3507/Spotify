@@ -291,8 +291,8 @@ def history():
             
         history_tracks.append({
             "name": track.get("name", "Unkown"),
-            "artist": track["artists"][0]["url"] if track["album"].get("images") else None,
-            "image": track["album"]["images"][0]["url"],
+            "artist": track["artists"][0]["name"],
+            "image": track["album"]["images"][0]["url"] if track["album"].get("images") else None,
             "url": track["external_urls"]["spotify"],
             "time_text": time_text
         })
