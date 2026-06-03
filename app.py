@@ -285,14 +285,14 @@ def history():
 @app.route("/now_playing_api")
 def now_playing_api():
     sp = get_spotify_client()
+
     if sp is None:
         return jsonify({"error": "no token"}), 401
 
-
     current = sp.current_playback()
-    
-    if current and current["item"]:
-        
+
+    if current and current.get("item"):
+
         item = current["item"]
         content_type = current.get("currently_playing_type")
 
@@ -305,28 +305,76 @@ def now_playing_api():
             now_playing = {
                 "type": "podcast",
                 "name": item["name"],
-                "show": item["show"]["name"],
+                "artist": "🎙 " + item["show"]["name"],
                 "image": image,
                 "progress": current["progress_ms"],
                 "duration": item["duration_ms"],
-                "url": item["external_urls"]["spotify"]
-            }
-            
-        else:
-        
-            now_playing = {
-                "name": current["item"]["name"],
-                "artist": current["item"]["artists"][0]["name"],
-                "image": current["item"]["album"]["images"][0]["url"],
-                "progress": current["progress_ms"],
-                "duration": current["item"]["duration_ms"],
-                "url": current["item"]["external_urls"]["spotify"],
+                "url": item["external_urls"]["spotify"],
                 "is_playing": current["is_playing"]
             }
-    else:
-            now_playing = None
+
+        else:
+
+            now_playing = {
+                "type": "track",
+                "name": item["name"],
+                "artist": item["artists"][0]["name"],
+                "image": item["album"]["images"][0]["url"],
+                "progress": current["progress_ms"],
+                "duration": item["duration_ms"],
+                "url": item["external_urls"]["spotify"],
+                "is_playing": current["is_playing"]
+            }
+
         return jsonify(now_playing)
 
+    return jsonify(None)
+
+##@app.route("/now_playing_api")
+##def now_playing_api():
+##    sp = get_spotify_client()
+##    if sp is None:
+##        return jsonify({"error": "no token"}), 401
+##
+##
+##    current = sp.current_playback()
+##    
+##    if current and current["item"]:
+##        
+##        item = current["item"]
+##        content_type = current.get("currently_playing_type")
+##
+##        if content_type == "episode":
+##
+##            image = None
+##            if item.get("images"):
+##                image = item["images"][0]["url"]
+##
+##            now_playing = {
+##                "type": "podcast",
+##                "name": item["name"],
+##                "show": item["show"]["name"],
+##                "image": image,
+##                "progress": current["progress_ms"],
+##                "duration": item["duration_ms"],
+##                "url": item["external_urls"]["spotify"]
+##            }
+##            
+##        else:
+##        
+##            now_playing = {
+##                "name": current["item"]["name"],
+##                "artist": current["item"]["artists"][0]["name"],
+##                "image": current["item"]["album"]["images"][0]["url"],
+##                "progress": current["progress_ms"],
+##                "duration": current["item"]["duration_ms"],
+##                "url": current["item"]["external_urls"]["spotify"],
+##                "is_playing": current["is_playing"]
+##            }
+##    else:
+##            now_playing = None
+##        return jsonify(now_playing)
+##
 @app.route("/callback")
 def callback():
     code = request.args.get("code")
