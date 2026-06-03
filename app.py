@@ -273,21 +273,22 @@ def history():
 
         played_at = item.get("played_at")
 
-        time_text = ""
+        time_text = "Bilinmiyor"
 
         if played_at:
-            played_time = datetime.strptime(played_at, "%Y-%m-%dT%H:%M:%S.%fZ")
-            played_time = played_time.replace(tzinfo=timezone.utc)
+            try:
+                played_time = datetime.fromisoformat(played_at.replace("Z", "+00:00"))
+                now = datetime.now(timezone.utc)
 
-            now = datetime.now(timezone.utc)
+                diff_minutes = int((now-played_time).total_seconds() / 60)
 
-            diff_minutes = int((now-played_time).total_seconds() / 60)
-
-            if diff_minutes < 60:
-                time_text = f"{diff_minutes} dakika önce"
-            else:
-                hours = diff_minutes // 60
-                time_text = f"{hours} saat önce"
+                if diff_minutes < 60:
+                    time_text = f"{diff_minutes} dakika önce"
+                else:
+                    hours = diff_minutes // 60
+                    time_text = f"{hours} saat önce"
+            except:
+                time_text = "-"
             
         history_tracks.append({
             "name": track.get("name", "Unkown"),
