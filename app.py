@@ -249,23 +249,17 @@ def history():
             "name": current["item"]["name"],
             "artist": current["item"]["artists"][0]["name"],
             "image": current["item"]["album"]["images"][0]["url"],
-            "progress": current["progress_ms", 0],
-            "duration": current["item"]["duration_ms", 0],
+            "progress": current.get("progress_ms", 0),
+            "duration": current["item"].get("duration_ms", 0),
             "url": current["item"]["external_urls"]["spotify"]
         }
     else:
         now_playing = None
 
-    profile = sp.current_user()
-    profile = {
-        "name": profile.get("display_name"),
-        "image": profile["images"][0]["url"] if profile.get("images") else None,
-        "product": profile.get("product")
-    }
+    
     history = sp.current_user_recently_played(limit=25)["items"]
 
 
-    history_data = sp.current_user_recently_played(limit=10)["items"]
     history_tracks = []
     for item in history:
         track = item.get("track")
@@ -282,24 +276,22 @@ def history():
         time_text = ""
 
         if played_at:
-            from datetime import datetime, timezone
+            played_time = datetime.strptime(played_at, "%Y-%m-%dT%H:%M:%S.%fZ")
+            played_time = played_time.replace(tzinfo=timezone.utc)
 
-        played_time = datetime.strptime(played_at, "%Y-%m-%dT%H:%M:%S.%fZ")
-        played_time = played_time.replace(tzinfo=timezone.utc)
+            now = datetime.now(timezone.utc)
 
-        now = datetime.now(timezone.utc)
+            diff_minutes = int((now-played_time).total_seconds() / 60)
 
-        diff_minutes = int((now-played_time).total_seconds() / 60)
-
-        if diff_minutes < 60:
-            time_text = f"{diff_minutes} dakika önce"
-        else:
-            hours = diff_minutes // 60
-            time_text = f"{hours} saat önce"
+            if diff_minutes < 60:
+                time_text = f"{diff_minutes} dakika önce"
+            else:
+                hours = diff_minutes // 60
+                time_text = f"{hours} saat önce"
             
         history_tracks.append({
             "name": track.get("name", "Unkown"),
-            "artist": track["artists"][0]["name"],
+            "artist": track["artists"][0]["url"] if track["album"].get("images") else None,
             "image": track["album"]["images"][0]["url"],
             "url": track["external_urls"]["spotify"],
             "time_text": time_text
@@ -327,8 +319,8 @@ def now_playing_api():
     item = current["item"]
 
     is_podcast = (
-        "show" in item
-        and "album" not in item
+        current.get("currently_playing_type") == "episode"
+        or ("show" in item and "album" not in item)
     )
 
     if is_podcast:
