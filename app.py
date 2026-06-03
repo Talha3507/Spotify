@@ -323,7 +323,7 @@ def now_playing_api():
                 "url": current["item"]["external_urls"]["spotify"],
                 "is_playing": current["is_playing"]
             }
-        else:
+    else:
             now_playing = None
         return jsonify(now_playing)
 
