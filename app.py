@@ -296,7 +296,10 @@ def now_playing_api():
 
     item = current["item"]
 
-    is_podcast = "show" in item
+    is_podcast = (
+        "show" in item
+        and "album" not in item
+    )
 
     if is_podcast:
 
