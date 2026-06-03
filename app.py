@@ -51,6 +51,8 @@ def login():
 def home():
     return render_template("index.html")
 
+
+
 ##@app.route("/following")
 ##def following():
 ##    return "OK FOLLOWING"
@@ -288,19 +290,42 @@ def now_playing_api():
 
 
     current = sp.current_playback()
+    
     if current and current["item"]:
-        now_playing = {
-            "name": current["item"]["name"],
-            "artist": current["item"]["artists"][0]["name"],
-            "image": current["item"]["album"]["images"][0]["url"],
-            "progress": current["progress_ms"],
-            "duration": current["item"]["duration_ms"],
-            "url": current["item"]["external_urls"]["spotify"],
-            "is_playing": current["is_playing"]
-        }
-    else:
-        now_playing = None
-    return jsonify(now_playing)
+        
+        item = current["item"]
+        content_type = current.get("currently_playing_type")
+
+        if content_type = "episode":
+
+            image = None
+            if item.get("images"):
+                image = item["images"][0]["url"]
+
+            now_playing = {
+                "type": "podcast",
+                "name": item["name"],
+                "show": item["show"]["name"],
+                "image": image,
+                "progress": current["progress_ms"],
+                "duration": item["duration_ms"],
+                "url": item["external_urls"]["spotify"]
+            }
+            
+        else:
+        
+            now_playing = {
+                "name": current["item"]["name"],
+                "artist": current["item"]["artists"][0]["name"],
+                "image": current["item"]["album"]["images"][0]["url"],
+                "progress": current["progress_ms"],
+                "duration": current["item"]["duration_ms"],
+                "url": current["item"]["external_urls"]["spotify"],
+                "is_playing": current["is_playing"]
+            }
+        else:
+            now_playing = None
+        return jsonify(now_playing)
 
 @app.route("/callback")
 def callback():
