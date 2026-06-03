@@ -256,7 +256,7 @@ def history():
             "url": item.get("external_urls", {}).get("spotify")
         }
 
-    history_items = sp.current_user_recently_played(limit=25).get("items", [])
+    history_items = sp.current_user_recently_played(limit=50).get("items", [])
 
     history_tracks = []
 
