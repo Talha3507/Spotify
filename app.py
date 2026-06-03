@@ -3,6 +3,7 @@ from flask import Flask, redirect, request, session, render_template, jsonify
 from dotenv import load_dotenv
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
+from datetime import datetime, timezone
 
 load_dotenv()
 
@@ -248,8 +249,8 @@ def history():
             "name": current["item"]["name"],
             "artist": current["item"]["artists"][0]["name"],
             "image": current["item"]["album"]["images"][0]["url"],
-            "progress": current["progress_ms"],
-            "duration": current["item"]["duration_ms"],
+            "progress": current["progress_ms", 0],
+            "duration": current["item"]["duration_ms", 0],
             "url": current["item"]["external_urls"]["spotify"]
         }
     else:
@@ -268,11 +269,28 @@ def history():
     history_tracks = []
     for item in history:
         track = item["track"]
+
+        played_at = item["played_at"]
+
+        played_time = datetime.strptime(played_at, "%Y-%m-%dT%H:%M:%S.%fZ")
+        played_time = played_time.replace(tzinfo=timezone.utc)
+
+        now = datetime.now(timezone.utc)
+
+        diff_minutes = int((now-played_time).total_seconds() / 60)
+
+        if diff_minutes < 60:
+            time_text = f"{diff_minutes} dakika önce"
+        else:
+            hours = diff_minutes // 60
+            time_text = f"{hours} saat önce"
+            
         history_tracks.append({
             "name": track["name"],
             "artist": track["artists"][0]["name"],
             "image": track["album"]["images"][0]["url"],
             "url": track["external_urls"]["spotify"]
+            "time_text": time_text
         })
 
     return render_template(

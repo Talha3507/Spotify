@@ -90,6 +90,10 @@
             <img src="{{ track.image }}" loading="lazy" width="80">
             <span>{{ loop.index }}. {{ track.name }} - {{ track.artist }}</span>
         </a>
+
+        <small style="color:#aaa;">
+            {{ track.time_text }}
+        </small>
     </div>
     {% endfor %}
 </div>
