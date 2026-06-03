@@ -266,30 +266,25 @@ def history():
             continue
 
         played_at = item.get("played_at")
-        time_text = "Bilinmiyor"
+        time_text = "bilinmiyor"
 
         if played_at:
             try:
-                from datetime import datetime, timezone
+                played_time = datetime.strptime(played_at, "%Y-%m-%dT%H:%M:%S.%fZ")
+            except ValueError:
+                played_time = datetime.strptime(played_at, "%Y-%m-%dT%H:%M:%SZ")
 
-                # Spotify timestamp fix (milisaniye + normal format uyumlu)
-                try:
-                    played_time = datetime.strptime(played_at, "%Y-%m-%dT%H:%M:%S.%fZ")
-                except ValueError:
-                    played_time = datetime.strptime(played_at, "%Y-%m-%dT%H:%M:%SZ")
+            played_time = played_time.replace(tzinfo=timezone.utc)
+            now = datetime.now(timezone.utc)
 
-                played_time = played_time.replace(tzinfo=timezone.utc)
+            diff_seconds = int((now - played_time).total_seconds())
 
-                now = datetime.now(timezone.utc)
-                diff_minutes = int((now - played_time).total_seconds() / 60)
-
-                if diff_minutes < 1:
-                    time_text = "az önce"
-                elif diff_minutes < 60:
-                    time_text = f"{diff_minutes} dakika önce"
-                else:
-                    hours = diff_minutes // 60
-                    time_text = f"{hours} saat önce"
+            if diff_seconds < 60:
+                time_text = "az önce"
+            elif diff_seconds < 3600:
+                time_text = f"{diff_seconds // 60} dakika önce"
+            else:
+                time_text = f"{diff_seconds // 3600} saat önce"
 
             except Exception:
                 time_text = "—"
